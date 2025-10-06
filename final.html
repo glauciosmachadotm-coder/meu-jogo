@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz - EMEF Giordani</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #fdf6ff, #e9f6ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.app {
+  background: #fff;
+  border-radius: 24px;
+  max-width: 500px;
+  width: 95%;
+  padding: 30px 20px 20px;
+  box-shadow: 0 12px 40px rgba(20, 20, 50, .2);
+  text-align: center;
+}
+
+.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-family: 'Fredoka One', cursive;
+  color: #6b7cff;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+}
+
+#photo {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 4px solid #6b7cff;
+  margin-bottom: 20px;
+  background: #fff;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+#photo:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 20px rgba(107,124,255,.4);
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.option-btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 16px;
+  background: #eef1ff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-size: 16px;
+}
+.option-btn:hover {
+  background: linear-gradient(90deg, #6b7cff, #ff6b9e);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.timer {
+  margin-top: 10px;
+  font-weight: 700;
+  color: #50506b;
+}
+
+.score {
+  margin-top: 16px;
+  font-weight: 700;
+  font-size: 18px;
+  color: #21a179;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Tela inicial */
+#startScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#startBtn {
+  padding: 14px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #6b7cff, #ff6b9e);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+#startBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(107,124,255,.4);
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Tela inicial -->
+  <div id="startScreen">
+    <img class="logo" src="https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/IMG_6575%20(2).PNG?raw=true" alt="Logo da Escola">
+    <h1>Quiz</h1>
+    <button id="startBtn">Iniciar Quiz</button>
+  </div>
+
+  <!-- Tela do jogo -->
+  <div id="gameScreen" class="hidden">
+    <h1>Quem é?</h1>
+    <img id="photo" src="" alt="Foto">
+    <div class="options" id="options"></div>
+    <div class="timer" id="timer">Tempo restante: 10s</div>
+    <div class="score hidden" id="score"></div>
+    <button class="option-btn hidden" id="btnRestart">Jogar Novamente</button>
+  </div>
+
+</div>
+
+<script>
+// Lista de pessoas
+const PESSOAS = [
+  {name:"Bianca", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/1.jpeg?raw=true"},
+  {name:"Marco", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/2.jpeg?raw=true"},
+  {name:"Gabi", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/3.jpeg?raw=true"},
+  {name:"Taborda", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/4.jpeg?raw=true"},
+  {name:"Dayani", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/5.jpeg?raw=true"},
+  {name:"Roselei", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/6.jpeg?raw=true"},
+  {name:"Leila", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/7.jpeg?raw=true"},
+  {name:"Guilherme", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/8.jpeg?raw=true"},
+  {name:"Cris", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/9.jpeg?raw=true"},
+  {name:"Claudete", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/10.jpeg?raw=true"},
+  {name:"Rosângela", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/11.jpeg?raw=true"},
+  {name:"Maritê", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/12.jpeg?raw=true"},
+  {name:"Carla", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/13.jpeg?raw=true"},
+  {name:"Vanessa", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/14.1.jpeg?raw=true"},
+  {name:"Letícia", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/15.jpeg?raw=true"},
+  {name:"Simoni", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/16.jpeg?raw=true"},
+  {name:"Márcia Q", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/17.jpeg?raw=true"},
+  {name:"Rosane", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/18.jpeg?raw=true"},
+  {name:"Márcia Vogel", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/19.1.jpeg?raw=true"},
+  {name:"Juliane", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/20.jpeg?raw=true"},
+  {name:"Patrícia", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/21.jpeg?raw=true"},
+  {name:"Franciele", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/22.jpeg?raw=true"},
+  {name:"Fernando", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/23.jpeg?raw=true"},
+  {name:"Stefani", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/24.jpeg?raw=true"},
+  {name:"Cármen", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/25.jpeg?raw=true"},
+  {name:"Tati", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/26.jpeg?raw=true"},
+  {name:"Djuli", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/27.jpeg?raw=true"},
+  {name:"Vilmar", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/29.jpeg?raw=true"},
+  {name:"Márcia B", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/M%C3%A1rcia%20Becker.jpeg?raw=true"}
+];
+
+let currentIndex = 0, score = 0, timerInterval = null;
+const photoEl = document.getElementById("photo");
+const optionsEl = document.getElementById("options");
+const timerEl = document.getElementById("timer");
+const scoreEl = document.getElementById("score");
+const btnRestart = document.getElementById("btnRestart");
+const startScreen = document.getElementById("startScreen");
+const gameScreen = document.getElementById("gameScreen");
+const startBtn = document.getElementById("startBtn");
+
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+
+function startGame(){
+  startScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+  currentIndex = 0; 
+  score = 0; 
+  scoreEl.classList.add("hidden"); 
+  btnRestart.classList.add("hidden");
+  photoEl.classList.remove("hidden"); 
+  timerEl.classList.remove("hidden");
+  showQuestion();
+}
+
+function showQuestion(){
+  if(currentIndex >= PESSOAS.length){
+    endGame();
+    return;
+  }
+  const pessoa = PESSOAS[currentIndex];
+  photoEl.src = pessoa.photo;
+
+  const shuffled = shuffle([...PESSOAS]).slice(0,4);
+  if(!shuffled.includes(pessoa)) shuffled[0] = pessoa;
+  shuffle(shuffled);
+  
+  optionsEl.innerHTML = "";
+  shuffled.forEach(p => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    btn.textContent = p.name;
+    btn.onclick = () => selectOption(p.name);
+    optionsEl.appendChild(btn);
+  });
+  startTimer();
+}
+
+function selectOption(name){
+  stopTimer();
+  const pessoa = PESSOAS[currentIndex];
+  if(name === pessoa.name){
+    score++;
+  }
+  currentIndex++;
+  setTimeout(showQuestion, 300);
+}
+
+function startTimer(){
+  let time = 10;
+  timerEl.textContent = `Tempo restante: ${time}s`;
+  timerInterval = setInterval(()=>{
+    time--;
+    timerEl.textContent = `Tempo restante: ${time}s`;
+    if(time <= 0){
+      stopTimer();
+      currentIndex++;
+      showQuestion();
+    }
+  },1000);
+}
+function stopTimer(){ clearInterval(timerInterval); }
+
+function endGame(){
+  photoEl.classList.add("hidden");
+  optionsEl.innerHTML = "";
+  timerEl.classList.add("hidden");
+  scoreEl.textContent = `🎉 Você acertou ${score} de ${PESSOAS.length}!`;
+  scoreEl.classList.remove("hidden");
+  btnRestart.classList.remove("hidden");
+}
+
+btnRestart.onclick = startGame;
+startBtn.onclick = startGame;
+</script>
+
+</body>
+</html>
