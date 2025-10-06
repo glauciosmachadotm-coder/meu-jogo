@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quem é Quem?</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #0077b6, #00b4d8);
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .logo {
+    width: 130px;
+    margin: 25px auto 10px;
+    display: block;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.5));
+  }
+
+  .container {
+    max-width: 500px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.3);
+    transition: 0.5s ease;
+  }
+
+  h1 {
+    margin-bottom: 10px;
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+
+  img.photo {
+    width: 100%;
+    max-height: 300px;
+    border-radius: 15px;
+    margin: 10px 0 15px;
+    object-fit: contain;
+    background: #fff;
+  }
+
+  button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #fff;
+    color: #0077b6;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #90e0ef;
+  }
+
+  #score, #timer {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+
+  .feedback {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 15px 0;
+    animation: pop 0.4s;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .correct {
+    color: #06d6a0;
+  }
+  .wrong {
+    color: #ef476f;
+  }
+
+  .progress-bar {
+    height: 10px;
+    background: #fff;
+    border-radius: 5px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .progress {
+    height: 10px;
+    background: #ffd166;
+    width: 100%;
+    transition: width 0.1s linear;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  #start-screen h1 {
+    font-size: 36px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  }
+
+  #start-btn {
+    background: #ffd166;
+    color: #073b4c;
+    font-size: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+    padding: 14px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+  }
+
+  #start-btn:hover {
+    transform: scale(1.05);
+  }
+
+  #end-screen {
+    font-size: 20px;
+  }
+
+</style>
+</head>
+<body>
+
+<img src="https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/IMG_6575%20(2).PNG?raw=true" class="logo" alt="Logo da Escola">
+
+<div class="container">
+
+  <!-- TELA INICIAL -->
+  <div id="start-screen">
+    <h1>👶 Quem é Quem?</h1>
+    <p>Será que você reconhece seus colegas quando eram crianças?</p>
+    <button id="start-btn">🎮 Iniciar Jogo</button>
+  </div>
+
+  <!-- JOGO -->
+  <div id="game" class="hidden">
+    <img id="photo" class="photo" src="" alt="Professor">
+    <div id="options"></div>
+    <div class="progress-bar"><div class="progress" id="progress"></div></div>
+    <div id="feedback"></div>
+    <div id="score">Pontuação: 0</div>
+  </div>
+
+  <!-- FINAL -->
+  <div id="end-screen" class="hidden">
+    <h2>🏁 Fim do jogo!</h2>
+    <p id="final-score"></p>
+    <button id="restart-btn">🔁 Jogar Novamente</button>
+  </div>
+
+</div>
+
+<script>
+const teachers = [
+  {name:"Bianca", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/1.jpeg?raw=true"},
+  {name:"Marco", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/2.jpeg?raw=true"},
+  {name:"Gabi", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/3.jpeg?raw=true"},
+  {name:"Taborda", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/4.jpeg?raw=true"},
+  {name:"Dayani", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/5.jpeg?raw=true"},
+  {name:"Roselei", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/6.jpeg?raw=true"},
+  {name:"Leila", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/7.jpeg?raw=true"},
+  {name:"Guilherme", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/8.jpeg?raw=true"},
+  {name:"Cris", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/9.jpeg?raw=true"},
+  {name:"Claudete", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/10.jpeg?raw=true"},
+  {name:"Rosângela", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/11.jpeg?raw=true"},
+  {name:"Maritê", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/12.jpeg?raw=true"},
+  {name:"Carla", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/13.jpeg?raw=true"},
+  {name:"Vanessa", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/14.1.jpeg?raw=true"},
+  {name:"Letícia", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/15.jpeg?raw=true"},
+  {name:"Simoni", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/16.jpeg?raw=true"},
+  {name:"Márcia Q", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/17.jpeg?raw=true"},
+  {name:"Rosane", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/18.jpeg?raw=true"},
+  {name:"Márcia Vogel", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/19.1.jpeg?raw=true"},
+  {name:"Juliane", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/20.jpeg?raw=true"},
+  {name:"Patrícia", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/21.jpeg?raw=true"},
+  {name:"Franciele", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/22.jpeg?raw=true"},
+  {name:"Fernando", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/23.jpeg?raw=true"},
+  {name:"Stefani", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/24.jpeg?raw=true"},
+  {name:"Cármen", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/25.jpeg?raw=true"},
+  {name:"Tati", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/26.jpeg?raw=true"},
+  {name:"Djuli", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/27.jpeg?raw=true"},
+  {name:"Vilmar", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/29.jpeg?raw=true"},
+  {name:"Márcia B", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/M%C3%A1rcia%20Becker.jpeg?raw=true"},
+  {name:"Glaucios", photo:"https://raw.githubusercontent.com/glauciosmachadotm-coder/esc/main/WhatsApp%20Image%202025-10-06%20at%2012.52.06.jpeg?raw=true"}
+];
+
+let score = 0;
+let currentIndex = 0;
+let timer;
+let timeLeft = 10;
+
+const startScreen = document.getElementById("start-screen");
+const gameEl = document.getElementById("game");
+const endScreen = document.getElementById("end-screen");
+const photoEl = document.getElementById("photo");
+const optionsEl = document.getElementById("options");
+const feedbackEl = document.getElementById("feedback");
+const scoreEl = document.getElementById("score");
+const progressEl = document.getElementById("progress");
+const finalScoreEl = document.getElementById("final-score");
+
+document.getElementById("start-btn").addEventListener("click", startGame);
+document.getElementById("restart-btn").addEventListener("click", startGame);
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function startGame() {
+  score = 0;
+  currentIndex = 0;
+  shuffle(teachers);
+  startScreen.classList.add("hidden");
+  endScreen.classList.add("hidden");
+  gameEl.classList.remove("hidden");
+  nextQuestion();
+}
+
+function nextQuestion() {
+  feedbackEl.textContent = "";
+  if (currentIndex >= teachers.length) {
+    endGame();
+    return;
+  }
+  const correct = teachers[currentIndex];
+  photoEl.src = correct.photo;
+
+  const options = [correct];
+  while (options.length < 4) {
+    let random = teachers[Math.floor(Math.random() * teachers.length)];
+    if (!options.includes(random)) options.push(random);
+  }
+  shuffle(options);
+
+  optionsEl.innerHTML = "";
+  options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt.name;
+    btn.onclick = () => selectAnswer(opt.name === correct.name);
+    optionsEl.appendChild(btn);
+  });
+
+  timeLeft = 10;
+  clearInterval(timer);
+  progressEl.style.width = "100%";
+  timer = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+  timeLeft--;
+  progressEl.style.width = `${(timeLeft / 10) * 100}%`;
+  if (timeLeft <= 0) {
+    clearInterval(timer);
+    feedbackEl.textContent = "⏰ Tempo esgotado!";
+    feedbackEl.className = "feedback wrong";
+    currentIndex++;
+    setTimeout(nextQuestion, 1500);
+  }
+}
+
+function selectAnswer(correct) {
+  clearInterval(timer);
+  if (correct) {
+    score++;
+    feedbackEl.textContent = "🎉 Acertou!";
+    feedbackEl.className = "feedback correct";
+  } else {
+    feedbackEl.textContent = "❌ Errou!";
+    feedbackEl.className = "feedback wrong";
+  }
+  scoreEl.textContent = `Pontuação: ${score}`;
+  currentIndex++;
+  setTimeout(nextQuestion, 1500);
+}
+
+function endGame() {
+  gameEl.classList.add("hidden");
+  endScreen.classList.remove("hidden");
+  finalScoreEl.innerHTML = `Você acertou <strong>${score}</strong> de <strong>${teachers.length}</strong>!`;
+}
+</script>
+
+</body>
+</html>
